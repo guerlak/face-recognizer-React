@@ -8,7 +8,7 @@ const ImgLinkForm = ({onInputChange, onBtnSubmit}) => {
             </p>
             
             <input className="pa2 w-20 f4 center" onChange={onInputChange}/>
-            <button className="f4 grow link pa2 w-10 ph3 pv2 bg-light-purple dib white" onClick={onBtnSubmit}>Detect</button>
+            <button className="f4 ma3 grow link pa2 w-10 ph3 pv2 bg-light-purple dib white" onClick={onBtnSubmit}>Detect</button>
         </div>
 
     )

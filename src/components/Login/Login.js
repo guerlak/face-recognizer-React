@@ -4,6 +4,7 @@ class Login extends Component{
 
     constructor(props){
         super(props);
+        
         this.state = {
           inputEmail: '',
           inputPassword: ''
@@ -11,47 +12,50 @@ class Login extends Component{
         }
       }
 
-      getEmail = (e) => {
+    getEmail = (e) => {
         this.setState({inputEmail: e.target.value})
-      }
+    }
 
-      getPass = (e) => {
+    getPass = (e) => {
         this.setState({inputPassword: e.target.value})
-      }
+    }
 
-      onSubmit = () =>{
+    onSubmit = () =>{
 
-        fetch('http://localhost:3001/login', {
-            method: 'post',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                email:this.state.inputEmail,
-                password:this.state.inputPassword
+        if(this.state.inputEmail === ""){
+            console.log('wrong')
+        }else{
+            fetch('https://frozen-dusk-72997.herokuapp.com/login', {
+                method: 'post',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email:this.state.inputEmail,
+                    password:this.state.inputPassword
+                })
             })
-        })
-        .then(resp => resp.json())
-        .then(user => {
-            console.log("User id: " + user.id)
-            if(user !== "null"){
-                this.props.onRouteChange('home');
-                this.props.loadUser(user);
-            }else{
-                document.getElementById('errorLogin').innerHTML = '<p style="color: red"> Error login </p>';
-            }
-        })
-        
-      }
+            .then(resp => resp.json())
+            .then(user => {
+            
+                if(user.id){
+                    console.log("Login done")
+                    this.props.onRouteChange('home');
+                    this.props.loadUser(user);
+                }else{
+                    document.getElementById('errorLogin').innerHTML = '<p style="color: red"><strong>Error login</strong></p>';
+                }
+            })
+        }
+    }
 
     render(){      
     return (
         <article className="br3 ba  b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
             <main className="pa4 black-80">
-                
                     <fieldset  className="ba b--transparent ph0 mh0">
-                        <legend className="f4 fw6 ph0 mh0">Sign In</legend>
+                        <legend className="f4 fw6 ph0 mh0">Face Recognition</legend>
                         <div className="mt3">
                             <label className="db fw6 lh-copy f6" >Email</label>
-                            <input onChange={this.getEmail} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="email-address"  />
+                            <input onChange={this.getEmail} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="email-address" />
                         </div>
                         <div className="mv3">
                             <label className="db fw6 lh-copy f6" >Password</label>
@@ -65,7 +69,6 @@ class Login extends Component{
                     <div className="lh-copy mt3">
                         <a href="#0" onClick={() => this.props.onRouteChange('register')}className="f6 link dim black db">Register</a>
                     </div>
-              
             </main>   
             </article>
         )

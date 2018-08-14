@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Navigation from './components/Navigation/Navigation';
-import Logo from './components/Logo/Logo';
+// import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImgLinkForm/ImgLinkForm';
 import Rank from './components/Rank/Rank';
 import Particles from 'react-particles-js';
@@ -10,13 +10,21 @@ import Register from './components/Register/Register'
 import Clarifai from 'clarifai';
 import './App.css';
 
-// initialize with your api key. This will also work in your browser via http://browserify.org/
+
+const emptyUser = {
+ 
+    id: '',
+    name: '',
+    email: '',
+    password: '',
+    entries: 0,
+    joined: ''
+
+}
 
 const app = new Clarifai.App({
  apiKey: 'e2090dd0b894438c834ca2d6f3587044'
 });
-
-// You can also use the SDK by adding this script to your HTML:
 
 const particlesParam = {
   particles: {
@@ -47,11 +55,9 @@ class App extends Component {
             password: '',
             entries: 0,
             joined: ''
-      }
-
+        }
     }
   }
-
 
   calcFaceLocation = (data) => {
    
@@ -77,18 +83,15 @@ class App extends Component {
     this.setState({input: evt.target.value})
   }
 
-
-  
-
   onBtnSubmit = () => {
 
     this.setState({imageUrl: this.state.input})
 
     app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
     .then(image => {
-      console.log("Image data:" + image)
+
       if(image){
-        fetch("http://localhost:3001/image",{
+        fetch("https://frozen-dusk-72997.herokuapp.com//image",{
           method: 'put',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -107,12 +110,12 @@ class App extends Component {
   }
 
 
-
-
   onRouteChange = (route) =>{
     
     if(route === 'signOut'){
       this.setState({isLogged: false})
+
+      this.setState({user:emptyUser})
       this.setState({route:route});
     }else if(route === 'home'){
       this.setState({isLogged: true})
@@ -156,7 +159,7 @@ class App extends Component {
         this.state.route === "home" ?
       
         <div>
-          <Logo />
+          {/* <Logo /> */}
           <Rank name={this.state.user.name} rankPosition={this.state.user.entries}/>
           <ImageLinkForm onInputChange={this.onInputChange} onBtnSubmit={this.onBtnSubmit} />
           <FaceRecognition box={this.state.box} imageSrc={this.state.imageUrl}/>

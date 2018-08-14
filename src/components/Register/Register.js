@@ -24,7 +24,7 @@ class Register extends Component{
 
     onSubmit = () =>{
 
-        fetch('http://localhost:3001/register', {
+        fetch('https://frozen-dusk-72997.herokuapp.com/register', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -32,8 +32,14 @@ class Register extends Component{
                 password: this.state.password,
                 name: this.state.name
             })
+            }).then(user=>{
+                if(user.id){
+                    document.querySelector('#response-register').innerHTML = "<p class=rgreen>Register success</p>";
+                }else{
+                    document.querySelector('#response-register').innerHTML = "<p class=red>This email already exists</p>";
+                }
         })
-       
+
     }
 
     render(){
@@ -43,25 +49,26 @@ class Register extends Component{
                     <main className="pa4 black-80">
                         <form className="measure">
                             <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
-                                <legend className="f4 fw6 ph0 mh0">Register</legend>
+                                <legend className="f4 fw6 ph0 mh0">Face Recognition</legend>
                                 <div className="mt3">
                                     <label className="db fw6 lh-copy f6" >Name</label>
-                                    <input onChange={this.getName} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="name"  id="name"/>
+                                    <input onChange={this.getName} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="name" id="name"/>
                                 </div>
                                 <div className="mt3">
                                     <label className="db fw6 lh-copy f6" >Email</label>
-                                    <input onChange={this.getEmail} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email"  id="email-address"/>
+                                    <input onChange={this.getEmail} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" id="email-address"/>
                                 </div>
                                 <div className="mv3">
                                     <label className="db fw6 lh-copy f6" >Password</label>
                                     <input onChange={this.getPass} className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" id="password"/>
                                 </div>
                             </fieldset>
+                            <div id="response-register"></div>
                             <div className="">
                                 <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="_register" onClick={this.onSubmit}/>
                             </div>
                             <div className="lh-copy mt3">
-                                <a href="#0" onClick={() => this.props.onRouteChange('login')}className="f6 link dim black db">Login</a>
+                                <p>Already a member? <a href="#0" onClick={() => this.props.onRouteChange('login')}className="f6 link dim black db"><b>click here</b></a></p>
                             </div>
                         
                         </form>
