@@ -7,7 +7,6 @@ import Particles from 'react-particles-js';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Login from './components/Login/Login'
 import Register from './components/Register/Register'
-import Clarifai from 'clarifai';
 import './App.css';
 
 
@@ -21,10 +20,6 @@ const emptyUser = {
     joined: ''
 
 }
-
-const app = new Clarifai.App({
- apiKey: 'e2090dd0b894438c834ca2d6f3587044'
-});
 
 const particlesParam = {
   particles: {
@@ -42,6 +37,7 @@ class App extends Component {
 
   constructor(){
     super();
+    
     this.state = {
       input: '',
       imageUrl: '',
@@ -72,6 +68,7 @@ class App extends Component {
       rightCol: width - (clarifaiFace.right_col * width),
       bottomRow: height - (clarifaiFace.bottom_row * height)
     }
+
   }
   
   showFaceBox = (box) => {
@@ -85,13 +82,18 @@ class App extends Component {
 
   onBtnSubmit = () => {
 
-    this.setState({imageUrl: this.state.input})
-
-    app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
+    fetch("http://localhost:3001/clarifai",{
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        url: this.state.input
+      })
+    })
+    .then(resp => resp.json())
     .then(image => {
-
+      console.log(image)
       if(image){
-        fetch("https://frozen-dusk-72997.herokuapp.com//image",{
+        fetch("http://localhost:3001/image",{
           method: 'put',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -100,34 +102,34 @@ class App extends Component {
         })
         .then(resp => resp.json())
         .then(count => {
-          console.log(count)
+     
           this.setState(Object.assign(this.state.user, {entries: count.entries}))
         })
         this.showFaceBox(this.calcFaceLocation(image))
-      }})
-      
-   .catch(err => console.log(err))
-  }
+      }}) 
+      .catch(err => console.log(err))
+    }
 
 
   onRouteChange = (route) =>{
     
-    if(route === 'signOut'){
-      this.setState({isLogged: false})
+      if(route === 'signOut'){
+        this.setState({isLogged: false})
+        this.setState({user:emptyUser})
+        this.setState({route:route});
 
-      this.setState({user:emptyUser})
-      this.setState({route:route});
-    }else if(route === 'home'){
-      this.setState({isLogged: true})
-      this.setState({route:route});
-    }else if(route === 'register'){
+      }else if(route === 'home'){
+        this.setState({isLogged: true})
+        this.setState({route:route})
+
+      }else if(route === 'register'){
+        this.setState({isLogged: false})
+        this.setState({route:route})
+
+      }else{
+        this.setState({route:route});
+      }
       
-      this.setState({isLogged: false})
-      this.setState({route:route});
-    }else{
-      this.setState({route:route});
-    }
-    
   }
 
   loadUser = (data) => {

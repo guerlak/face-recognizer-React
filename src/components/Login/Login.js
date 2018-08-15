@@ -28,6 +28,7 @@ class Login extends Component{
             fetch('https://frozen-dusk-72997.herokuapp.com/login', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
+                // mode: 'no-cors',
                 body: JSON.stringify({
                     email:this.state.inputEmail,
                     password:this.state.inputPassword
